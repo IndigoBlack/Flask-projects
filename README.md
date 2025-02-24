@@ -1,2 +1,2 @@
-# online-store
-An online store created using HTML/CSS, JavaScript and Flask
+# Flask Projects
+A repository for my basic Flask project
