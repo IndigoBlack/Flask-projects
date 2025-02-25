@@ -1,6 +1,5 @@
-# app.py
 from flask import Flask, render_template, request, redirect
-from models import db, User, Post, Likes, Comment 
+from models import db, User, Post, Likes, Comment
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
@@ -11,6 +10,9 @@ with app.app_context():
     db.create_all()
 
 # Routes and views go here...
+
+#Main routes: Login route, register route, index route, profile route
+
 
 if __name__ == '__main__':
     app.run(debug=True)
