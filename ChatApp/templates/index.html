@@ -1,7 +1,30 @@
 {% extends 'layout.html' %}
 
 {% block body %}
-    <h1>Welcome, {{ username }}!</h1>
+    <h1>Welcome, <a href="#">{{ username }}!</a></h1>
+    <!-- Link to profile page here -->
+    <hr>
+    <div class="all-posts">
+        {% for post in posts %}
+            <div id="post">
+                <small><strong>{{ post.user }}</strong></small>
+                <p>{{ post.content }}</p>
+                <small>{{ post.timestamp }}</small>
+                <!-- Use Javascript to display the comments only when a user clicks on the post or a button -->
+                 <button class="comment-button" data-post-id="{{ post.id }}">Show Comments</button>
+                {% for comment in post.comments %}
+                    <div id="comments_{{ post.id }}" class="comments-section" style="display: none;">
+                        <small><strong>{{ comment.user.username }}</strong> {{ comment.timestamp }}</small>
+                        <p>{{ comment.content}}</p>
+                    </div>
+                {% else %}
+                    <p>No comments</p>
+                 {% endfor %}
+            </div>
+        {% else %}
+            <p>No post found</p>
+        {% endfor %}
+    </div>
     
 
 {% endblock %}

@@ -9,7 +9,8 @@ class User(db.Model):
     username = db.Column(db.String(100), unique=True, nullable=False)
     password_hash = db.Column(db.String(255), nullable=False)
     email = db.Column(db.String(100), unique=True, nullable=False)
-    #profile_picture = db.Column(db.String(120))
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+    #profile_picture = db.Column(db.String(120), nullable=True)
     post = db.relationship('Post', back_populates='user', cascade='all, delete')
     likes = db.relationship('Likes', backref='User', cascade='all, delete')
 

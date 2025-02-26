@@ -1,6 +1,39 @@
 {% extends 'layout.html' %}
 
 {% block body %}
+    <h1>{{user.username}}</h1>
+    <small>{{ user.email }}</small>
+    <small>Joined on: {{ user.timestamp }}</small>
+    <hr>
+    <div class="posts">
+        {% for post in posts %}
+            <div id="post">
+                <small><strong>{{ post.user }}</strong></small>
+                <p>{{ post.content }}</p>
+                <small>{{ post.timestamp }}</small>
+                <!-- Use Javascript to display the comments only when a user clicks on the post or a button -->
+                 <button class="comment-button" data-post-id="{{ post.id }}">Show Comments</button>
+                 <div id="comments_{{ post.id }}" class="comments-section" style="display: none;">
+                    <ul class="comment-list">
+                        {% for comment in post.comments %}
+                            <li>
+                                <small><strong>{{ comment.user.username }}</strong> {{ comment.timestamp }}</small>
+                                <p>{{ comment.content}}</p>
+                            </li>
+                        {% else %}
+                            <li>No comments</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        {% else %}
+            <p>No post found</p>
+        {% endfor %}
+    </div>
 
+    {% if is_own_profile %}
+        <!-- Link to edit profile -->
+
+    {% endif %}
 
 {% endblock %}

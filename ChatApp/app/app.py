@@ -22,7 +22,9 @@ def index():
         username = current_user.username
     else:
         username = 'Guest'
-    return render_template('index.html', username=username)
+    posts = Post.query.all()
+    comments = Comment.query.all()
+    return render_template('index.html', username=username, posts=posts, comments=comments)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -42,10 +44,16 @@ def register():
         #after creating the user redirect them to the login page
         pass
 
-@app.route('/profile')
+@app.route('/profile/<int:user_id>')
 @login_required
-def profile():
-    pass
+def profile(user_id):
+    user = User.query.get_or_404(user_id)
+    posts = Post.query.get_or_404(user_id)
+    if user == current_user:
+        is_own_profile = True
+    else:
+        is_own_profile = False
+    return render_template('profile.html', user=user, posts=posts, is_own_profile=is_own_profile)
 
 if __name__ == '__main__':
 
