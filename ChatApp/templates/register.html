@@ -1,6 +1,28 @@
 {% extends 'layout.html' %}
 
 {% block body %}
+    <h1>Register</h1>
 
+    {% if message %}
+        {{ message }}
+    {% endif %}
+
+    <form action="/register" method="POST" id="register-form">
+
+        <label for="username">Username</label>
+        <input type="text" class="username" name="username" required>
+
+        <label for="email">Email</label>
+        <input type="email" class="email" name="email" required>
+
+        <label for="password">Password</label>
+        <input type="password" class="password" name="password" required>
+
+        <label for="confirm-password">Confirm Password</label>
+        <input type="password" class="confirm-password" name="confirm-password" required>
+
+        <button type="submit">Register</button>
+    </form>
+    Already registered? <a href="{{ url_for('login') }}">Login here</a>
 
 {% endblock %}

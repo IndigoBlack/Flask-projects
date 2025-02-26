@@ -1,8 +1,10 @@
 {% extends 'layout.html' %}
 
+{% block title %}{{ username }}'s profile{% endblock %}
+
 {% block body %}
     <h1>{{user.username}}</h1>
-    <small>{{ user.email }}</small>
+    <!-- <small>{{ user.email }}</small> -->
     <small>Joined on: {{ user.timestamp }}</small>
     <hr>
     <div class="posts">

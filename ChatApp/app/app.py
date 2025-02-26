@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, redirect, flash, url_for
 from flask_login import UserMixin, LoginManager, login_user, logout_user, login_required, current_user
 from flask_bcrypt import Bcrypt
 from models import db, User, Post, Likes, Comment
@@ -16,6 +16,11 @@ login_manager.init_app(app)
 
 # Routes and views go here...
 #Main routes: Login route, register route, index route, profile route
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
+
 @app.route('/')
 def index():
     if current_user.is_authenticated:
@@ -29,20 +34,50 @@ def index():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        #get username
-        #get password
-        #verify if the user exist. if they do redirect them to the index page if not tell them to register
-        pass
+        # Get form inputs
+        username = request.form.get('username')
+        password = request.form.get('password')
+
+        # Check user exists. logged them in if they do if they don't return them a message
+        user = User.query.filter_by(username=username).first()
+        if user and user.check_password(password):
+            login_user(user)
+            return redirect(url_for('index'))
+        else:
+            return render_template('login.html', message="User not found. Are you registered?")
+    return render_template('login.html')
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
-        #get username: check if a user with the same username exist
-        #get email: check if a user with the same email exist
-        #get password and confirm password
-        #if the passwords match create user else message-passwords must match
-        #after creating the user redirect them to the login page
-        pass
+        # Get form inputs
+        username = request.form.get('username')
+        email = request.form.get('email')
+        password = request.form.get('password')
+        password_confirmation = request.form.get('confirm-password')
+        
+        # Check if username exists
+        check_username = User.query.filter_by(username=username).first()
+        if check_username is not None:
+            return render_template('register.html', message="Username already exists")
+        
+        # Check if email exists
+        check_email = User.query.filter_by(email=email).first()
+        if check_email is not None:
+            return render_template('register.html', message="User with same email already exists")
+
+        # Check if password and the password confirmation match
+        if password == password_confirmation:
+            return render_template('register.html', message="Passwords must match")
+        
+        # Create user and redirect to login page
+        new_user = User(username=username, email=email)
+        new_user.set_password(password)
+        db.session.add(new_user)
+        db.session.commit()
+        return redirect(url_for('login'))
+    
+    return render_template('register.html')
 
 @app.route('/profile/<int:user_id>')
 @login_required
