@@ -1,6 +1,18 @@
 {% extends 'layout.html' %}
 
-{% block title %}{{ username }}'s profile{% endblock %}
+{% block title %}{{ user.username }}'s profile{% endblock %}
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        <div class="flash-messages">
+            {% for category, message in messages %}
+                <div class="flash-message {{ category }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+    {% endwith %}
 
 {% block body %}
     <h1>{{user.username}}</h1>
