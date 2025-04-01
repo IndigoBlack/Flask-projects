@@ -107,8 +107,25 @@ def new_post():
             return redirect(url_for('index'))
         else:
             flash('Post must not be empty', 'danger')
-    
+
     return render_template('new_post.html')
+
+@app.route('/comment/<int:post_id>', methods=['GET', 'POST'])
+@login_required
+def comment(post_id):
+    if request.method == "POST":
+        comment_content = request.form.get('comment-content')
+        user = current_user
+        if comment_content:
+            create_comment = Comment(content=comment_content, user_id=user.id, post_id=post_id)
+            db.session.add(create_comment)
+            db.session.commit()
+            flash('Comment successful', 'success')
+            return redirect(url_for('index'))
+        else:
+            flash('Comment must not be empty', 'danger')
+            return redirect(url_for('index'))
+    return render_template('comment.html')
 
 @app.route('/delete_post/<int:post_id>', methods=['POST'])
 @login_required
@@ -130,7 +147,6 @@ app.route('/follow/<int:user_id>')
 @login_required
 def follow(user_id):
     user_to_follow = User.query.get_or_404(user_id)
-
     try:
         follow_ = Follow(follower_id=current_user.id , followed_id=user_to_follow)
         db.session.add(follow_)
@@ -138,13 +154,11 @@ def follow(user_id):
     except Exception as e:
         db.session.rollback()
         flash('There was an issue with following the user', 'danger')
-    
     return redirect(url_for('index'))
 
 @app.route('/unfollow/<int:user_id>')
 @login_required
 def unfollow(user_id):
-
     try:
         follow_record = Follow.query.filter_by(follower_id=current_user.id, followed_id=user_id).first()
         
@@ -156,7 +170,6 @@ def unfollow(user_id):
             flash('You are not following this user')
     except Exception as e:
         flash('The was a problem unfollowing the user')
-
     return redirect(url_for('profile', user_id=user_id))
 
 #Like and unlike route. PS It can be the same route
@@ -165,7 +178,6 @@ def unfollow(user_id):
 def like(post_id):
     post = Post.query.get_or_404(post_id)
     like_ = Likes.query.filter_by(post_id=post.id, user_id=current_user.id).first()
-
     if like_:
         db.session.delete(like_)
         db.session.commit()
@@ -173,7 +185,6 @@ def like(post_id):
         like_ = Likes(post_id=post.id, user_id=current_user.id)
         db.session.add(like_)
         db.session.commit()
-        
     return redirect(url_for('new_post'))
 
 if __name__ == '__main__':

@@ -21,22 +21,28 @@
         <a href="{{ url_for('login') }}">Login here</a>
      {% endif %}
     <hr>
+    <div class="create-post">
+        <a href="{{ url_for('new_post') }}">Create Post</a>
+    </div>
     <div class="all-posts">
         {% for post in posts %}
             <div id="post">
                 <small><strong>{{ post.user }}</strong></small>
                 <p>{{ post.content }}</p>
                 <small>{{ post.timestamp }}</small>
+                <button><a href="{{ url_for('comment', post_id=post.id) }}">Comment</a></button>
                 <!-- Use Javascript to display the comments only when a user clicks on the post or a button -->
+                 {% if post.comments %}
                  <button class="comment-button" data-post-id="{{ post.id }}">Show Comments</button>
-                {% for comment in post.comments %}
-                    <div id="comments_{{ post.id }}" class="comments-section" style="display: none;">
+                 {% for comment in post.comments %}
+                    <div id="comments_{{ post.id }}" class="comment-section" data-post-id="{{ post.id }}" style="display: none;">
                         <small><strong>{{ comment.user.username }}</strong> {{ comment.timestamp }}</small>
                         <p>{{ comment.content}}</p>
                     </div>
                 {% else %}
                     <p>No comments</p>
-                 {% endfor %}
+                {% endfor %}
+                {% endif %}
             </div>
         {% else %}
             <p>No post found</p>
