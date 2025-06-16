@@ -8,6 +8,7 @@ from models import db, User, Post, Likes, Comment, Follow
 app = Flask(__name__)
 app.config.from_object(Config) 
 db.init_app(app) #Initialize the database with the app.
+app.secret_key = 'secret_key'
 
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -37,7 +38,7 @@ def login():
         username = request.form.get('username')
         password = request.form.get('password')
 
-        # Check if user exists. logged them in if they do if they don't return them a message
+        # Check if user exists. logged them in if they do, if they don't return them a message
         user = User.query.filter_by(username=username).first()
         if user and user.check_password(password):
             login_user(user)
@@ -46,6 +47,12 @@ def login():
             flash("User not found. Are you registered?")
             return render_template('login.html')
     return render_template('login.html')
+
+@app.route("/logout")
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for("login"))
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
